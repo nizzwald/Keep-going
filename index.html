@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+    <title>Keep Them Coming... Olympic Data on Cards</title>
+    <link href="css/newStyle.css" rel="stylesheet">
+</head>
+
+<body>  
+<div id="container">   
+<ul id="viewers-list" class="card-view">
+
+
+
+</ul>       
+</div> <!-- #container -->
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script>
+$(document).ready(function getMore(){
+  $.getJSON( "getAthletes.php?rec=20", function( ) {
+      })
+      .done(function(data) {
+          //Athlete's names are coming through as Lastname, Firstname
+          //Change them around here and...
+          //Some athletes are single named people like soccer players
+          //Check if a comma exists and if not, just use the single name
+          
+          var rawName = new Array();
+          var realName = ""
+
+          //Create the div string using json notation
+          //alert(data);
+          var ct = 0;
+          liString = "";
+          $.each( data, function( key, value ) { 
+              
+//Necessary because some people, such as soccer/football players have a single name              
+                if(data[ct].Athlete.indexOf(',') > -1) { 
+                    rawName = data[ct].Athlete.split(',');
+                    realName = rawName[1]+" "+rawName[0];
+                }
+                else {
+                    //rawName[0] = "";
+                    //rawName[1] = data[ct].Athlete;
+                    realName = rawName[1]
+                }
+              
+              if(data[ct].Gender == "Men"){
+                    headGraphic = "img/man.gif";
+                }
+            else{
+                    headGraphic = "img/woman.gif";
+            }
+                liString = "<li><p><img src='"+headGraphic+"' height='125' width='125' /></p><div class='info'><h3>"+realName+"</h3>History:<br/>Won a "+data[ct].Medal+" Medal in "+data[ct].Event+" for "+data[ct].Country+" in the "+data[ct].Edition+" "+data[ct].Season+" games.</div></li>";
+                $('#viewers-list').append(liString);
+                ct++;
+            });
+          //divText = "<span class='red'>"+rawName[1]+" "+rawName[0]+"</span> won the <span class='"+data[0].Medal+"'> "+data[0].Medal+"</span> for <span class='underline'>"+data[0].Country+"</span> in <span class='rosyBrown'>"+data[0].Event+"</span> during the <span class='blueish'>"+data[0].Edition+" "+data[0].Season+"</span> Olympic games";
+  })
+  .fail(function() {
+    console.log("We got a possible situation down here...");
+  })
+  .always(function() {
+      //Could add something here.
+  });
+    
+$(window).scroll(function(){
+  if  ($(window).scrollTop() == $(document).height() - $(window).height()){
+    getMore();
+  }
+});    
+}); 
+
+
+    </script>
+</body>
+</html>    
